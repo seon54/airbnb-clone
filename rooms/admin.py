@@ -1,9 +1,13 @@
 from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin
 
-from .models import Room
+from .models import Room, RoomType
+
+
+@admin.register(RoomType)
+class RoomTimeAdmin(admin.ModelAdmin):
+    pass
 
 
 @admin.register(Room)
-class RoomAdmin(UserAdmin):
+class RoomAdmin(admin.ModelAdmin):
     pass
