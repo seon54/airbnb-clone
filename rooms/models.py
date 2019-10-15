@@ -46,7 +46,7 @@ class HouseRule(AbstractItem):
 class Photo(TimeStampedModel):
     """Photo Model Definition"""
     caption = models.CharField(max_length=80)
-    file = models.ImageField()
+    file = models.ImageField(upload_to='room_photos')
     room = models.ForeignKey("Room", on_delete=models.CASCADE, related_name='photos')
 
     def __str__(self):
@@ -77,3 +77,11 @@ class Room(TimeStampedModel):
 
     def __str__(self):
         return self.name
+
+    def total_rating(self):
+        all_reviews = self.reviews.all()
+        all_ratings = 0
+        for review in all_reviews:
+            # TODO: ZeroDivisionError
+            all_ratings += review.rating_average()
+        return all_ratings / len(all_reviews)

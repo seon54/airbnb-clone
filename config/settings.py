@@ -126,6 +126,10 @@ USE_TZ = True
 
 STATIC_URL = "/static/"
 
+# Media files
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'uploads')
 
 # Custom user model
 AUTH_USER_MODEL = "users.User"
+
