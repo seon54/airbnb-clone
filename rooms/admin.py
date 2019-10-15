@@ -6,7 +6,10 @@ from .models import Room, RoomType, Amenity, Facility, HouseRule, Photo
 @admin.register(RoomType, Amenity, Facility, HouseRule)
 class RoomTimeAdmin(admin.ModelAdmin):
     """Item Admin Definition"""
-    pass
+    list_display = ('name', 'used_by')
+
+    def used_by(self, obj):
+        return obj.rooms.count()
 
 
 @admin.register(Room)
@@ -24,7 +27,7 @@ class RoomAdmin(admin.ModelAdmin):
         ),
         (
             "Space",
-            {"fields": ("guest", "beds", "bedrooms"),}
+            {"fields": ("guest", "beds", "bedrooms"), }
         ),
         (
             "More About the Space",
@@ -39,7 +42,7 @@ class RoomAdmin(admin.ModelAdmin):
     )
     list_display = (
         'name', 'country', 'city', 'price', 'guest', 'beds', 'bedrooms', 'baths', 'check_in', 'check_out',
-        'instant_book', 'count_amenities', 'count_facilities')
+        'instant_book', 'count_amenities', 'count_photos')
     list_filter = (
         'instant_book', 'host__superhost', 'city', 'room_type', 'amenities', 'facilities', 'rules',
         'country',)
@@ -50,11 +53,12 @@ class RoomAdmin(admin.ModelAdmin):
     def count_amenities(self, obj):
         return obj.amenities.count()
 
-    def count_facilities(self, obj):
-        return obj.facilities.count()
+    def count_photos(self, obj):
+        return obj.photos.count()
 
     count_amenities.short_description = 'amenities'
-    count_facilities.short_description = 'facilities'
+    count_photos.short_description = 'photos'
+
 
 @admin.register(Photo)
 class PhotoAdmin(admin.ModelAdmin):
