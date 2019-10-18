@@ -85,3 +85,7 @@ class Room(TimeStampedModel):
             # TODO: ZeroDivisionError
             all_ratings += review.rating_average()
         return all_ratings / len(all_reviews)
+
+    def save(self, *args, **kwargs):
+        self.city = str.title(self.city)
+        super().save(*args, **kwargs)
