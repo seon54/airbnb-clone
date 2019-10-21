@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block page_name %}
+    Home
+{% endblock %}
+
+{% block content %}
+
+    {% for room in rooms %}
+        {{ room.name }} / {{ room.address }} <br/>
+    {% endfor %}
+
+{% endblock %}
