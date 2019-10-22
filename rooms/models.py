@@ -45,9 +45,10 @@ class HouseRule(AbstractItem):
 
 class Photo(TimeStampedModel):
     """Photo Model Definition"""
+
     caption = models.CharField(max_length=80)
-    file = models.ImageField(upload_to='room_photos')
-    room = models.ForeignKey("Room", on_delete=models.CASCADE, related_name='photos')
+    file = models.ImageField(upload_to="room_photos")
+    room = models.ForeignKey("Room", on_delete=models.CASCADE, related_name="photos")
 
     def __str__(self):
         return self.caption
@@ -69,11 +70,15 @@ class Room(TimeStampedModel):
     check_in = models.TimeField()
     check_out = models.TimeField()
     instant_book = models.BooleanField(default=False)
-    host = models.ForeignKey("users.User", on_delete=models.CASCADE, related_name='rooms')
-    room_type = models.ForeignKey("RoomType", on_delete=models.SET_NULL, null=True, related_name='rooms')
-    amenities = models.ManyToManyField("Amenity", blank=True, related_name='rooms')
-    facilities = models.ManyToManyField("Facility", blank=True, related_name='rooms')
-    rules = models.ManyToManyField("HouseRule", blank=True, related_name='rooms')
+    host = models.ForeignKey(
+        "users.User", on_delete=models.CASCADE, related_name="rooms"
+    )
+    room_type = models.ForeignKey(
+        "RoomType", on_delete=models.SET_NULL, null=True, related_name="rooms"
+    )
+    amenities = models.ManyToManyField("Amenity", blank=True, related_name="rooms")
+    facilities = models.ManyToManyField("Facility", blank=True, related_name="rooms")
+    rules = models.ManyToManyField("HouseRule", blank=True, related_name="rooms")
 
     def __str__(self):
         return self.name
