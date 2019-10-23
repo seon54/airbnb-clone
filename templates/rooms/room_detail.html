@@ -1,8 +1,10 @@
 {% extends 'base.html' %}
 
-{% block page_name %}
-    Home
-{% endblock %}
+{% block page_title %}
+    {{ room.name }}
+{% endblock page_title %}
+
+{% block search-bar %} {% endblock search-bar %}
 
 {% block content %}
     <div>
@@ -40,4 +42,4 @@
         </h3>
     </div>
     
-{% endblock %}
+{% endblock content %}
