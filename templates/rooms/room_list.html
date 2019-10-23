@@ -5,9 +5,11 @@
 {% endblock %}
 
 {% block content %}
-    <h2>{{ now }}</h2>
+    
     {% for room in rooms %}
-        {{ room.name }} / {{ room.address }} <br/>
+        <h3>
+            <a href="{% url 'rooms:detail' room.pk %}">{{ room.name }} / {{ room.price }} <a/>
+        </h3>
     {% endfor %}
 
     <h5>
@@ -22,9 +24,5 @@
         {% endif %}
 
     </h5>
-
-
-
-
 
 {% endblock %}
