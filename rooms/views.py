@@ -1,11 +1,9 @@
-from django.http import Http404
+from django.core.paginator import Paginator
 from django.shortcuts import render
 from django.views.generic import ListView, DetailView, View
-from django.shortcuts import render
-from django.urls import reverse
 from django_countries import countries
-from rooms.models import Room, RoomType, Amenity, Facility
 from rooms.forms import SearchForm
+from rooms.models import Room, RoomType, Amenity, Facility
 
 
 class HomeView(ListView):
@@ -80,7 +78,13 @@ class SearchView(View):
                 for facility in facilities:
                     filter_args["facilities"] = facility
 
-                rooms = Room.objects.filter(**filter_args)
+                qs = Room.objects.filter(**filter_args).order_by('-created')
+                paginator = Paginator(qs, 10, orphans=5)
+                page = request.GET.get('page', 1)
+                rooms = paginator.get_page(page)
+
+                return render(request, "rooms/search.html", {'form': form, 'rooms': rooms})
         else:
             form = SearchForm()
-        return render(request, "rooms/search.html", {'form': form, 'rooms': rooms})
+        return render(request, "rooms/search.html", {'form': form})
+
