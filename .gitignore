@@ -2,6 +2,7 @@
 .idea/
 .vscode/
 uploads/
+.env
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
