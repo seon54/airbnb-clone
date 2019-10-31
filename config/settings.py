@@ -128,3 +128,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "uploads")
 
 # Custom user model
 AUTH_USER_MODEL = "users.User"
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+]
