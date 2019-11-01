@@ -82,13 +82,13 @@ def github_callback(request):
             result = requests.post(
                 f'https://github.com/login/oauth/access_token?client_id={client_id}&client_secret={client_secret}&code={code}',
                 headers={"Accept": "application/json"})
-            result_json = result.json()
-            error = result_json.get('error', None)
+            token_json = result.json()
+            error = token_json.get('error', None)
 
             if error is not None:
-                return redirect(reverse('users:login'))
+                raise GithubException()
             else:
-                access_token = result_json.get('access_token')
+                access_token = token_json.get('access_token')
                 profile_request = requests.get(
                     'https://api.github.com/user',
                     headers={"Authorization": f'token {access_token}', "Accept": "application/json"})
@@ -98,16 +98,21 @@ def github_callback(request):
                     name = profile_json.get('name')
                     email = profile_json.get('email')
                     bio = profile_json.get('bio')
-                    user = User.objects.get(email=email)
-                    if user is not None:
-                        return redirect(reverse('users:login'))
-                    else:
-                        user = User.objects.create(username=email, first_name=name, bio=bio, email=email)
-                        login(request, user)
-                        return redirect(reverse('core:home'))
+                    try:
+                        user = User.objects.get(email=email)
+                        if user.login_method != User.LOGIN_GITHUB:
+                            raise GithubException()
+                    except User.DoesNotExist:
+                        user = User.objects.create(username=email, first_name=name, bio=bio, email=email,
+                                                       login_method=User.LOGIN_GITHUB)
+                        user.set_unusable_password()
+                        user.save()
+                    login(request, user)
+                    return redirect(reverse('core:home'))
                 else:
-                    return reverse(reverse('users:login'))
+                    raise GithubException()
         else:
-            return redirect(reverse("core:home"))
+            raise GithubException()
     except GithubException:
+        # TODO: send error message
         return reverse(reverse('users:login'))
