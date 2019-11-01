@@ -8,7 +8,7 @@ class CustomUserAdmin(UserAdmin):
     """Custom User Admin"""
     list_display = (
     'username', 'first_name', 'last_name', 'email', 'is_active', 'language', 'currency', 'superhost',
-    'is_staff', 'is_superuser', 'email_verified', 'email_secret')
+    'is_staff', 'is_superuser', 'email_verified', 'email_secret', 'login_method')
     list_filter = UserAdmin.list_filter + ('superhost',)
     fieldsets = UserAdmin.fieldsets + (
         (
@@ -22,6 +22,7 @@ class CustomUserAdmin(UserAdmin):
                     "currency",
                     "language",
                     "superhost",
+                    "login_method",
                 )
             },
         ),
