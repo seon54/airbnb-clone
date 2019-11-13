@@ -1,29 +1,25 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
+
 {% block page_title %}
     Search
 {% endblock page_title %}
 
-{% block search-bar %} {% endblock search-bar %}
+{% block search-bar %}
+{% endblock search-bar %}
 
 {% block content %}
 
-    <h2>search</h2>
+    <h2>Search!</h2>
 
-    <form method='get' action='{% url 'rooms:search' %}'>
+    <form method="get" action="{% url "rooms:search" %}">
         {{ form.as_p }}
         <button>Search</button>
     </form>
-    <h3>Result</h3>
+
+    <h3>Results</h3>
+
     {% for room in rooms %}
         <h3>{{ room.name }}</h3>
     {% endfor %}
-
-    {% if rooms.has_previous %}
-        <a href="?page={{ rooms.previous_page_number }}">Previous</a>
-    {% endif %}
-    Page {{ rooms.number }} of {{ rooms.paginator.num_pages }}
-    {% if rooms.has_next %}
-        <a href="?page={{ rooms.next_page_number }}">Next</a>
-    {% endif %}
 
 {% endblock content %}

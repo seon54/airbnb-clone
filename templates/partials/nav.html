@@ -1,13 +1,10 @@
-<header>
-    <a href="{% url 'core:home' %}">Nbnb</a>
-    <ul>
-        {% if user.is_authenticated %}
-            <li><a href="{% url "users:logout" %}">Log out</a></li>
-        {% else %}
-            <li><a href="{% url "users:login" %}">Login</a></li>
-            <li><a href="{% url "users:signup" %}">Sign Up</a></li>
-        {% endif %}
+{% load static %}
+<ul class="flex items-center text-sm font-medium h-full">
+    {% if user.is_authenticated %}
+        <li class="nav_link"><a href="{% url "users:logout" %}">Log out</a></li>
+    {% else %}
+        <li class="nav_link"><a href="{% url "users:login" %}">Login</a></li>
+        <li class="nav_link"><a href="{% url "users:signup" %}">Sign Up</a></li>
+    {% endif %}
 
-    </ul>
-
-</header>
+</ul>

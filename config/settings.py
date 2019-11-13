@@ -120,6 +120,8 @@ USE_TZ = True
 
 STATIC_URL = "/static/"
 
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
+
 # Media files
 
 MEDIA_URL = "/media/"
@@ -129,9 +131,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "uploads")
 # Custom user model
 AUTH_USER_MODEL = "users.User"
 
-AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend',
-]
+AUTHENTICATION_BACKENDS = ["django.contrib.auth.backends.ModelBackend"]
 
 
 # Email Configuration
