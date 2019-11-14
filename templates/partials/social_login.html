@@ -1,4 +1,15 @@
-<div>
-    <a href="{% url 'users:github-login' %}">Continue with Github</a>
-    <a href="{% url 'users:kakao-login' %}">Continue with Kakaotalk</a>
+<div class="flex flex-col w-full">
+    <a href="{% url 'users:github-login' %}"
+       class="btn border-2 text-lg border-gray-700 font-medium mb-2 text-gray-800 text-center rounded-sm py-5">
+        <i class="fab fa-github mr-2 fa-lg"></i> Continue with Github
+    </a>
+    <a href="{% url 'users:kakao-login' %}"
+       class="btn border-yellow-400 font-medium mb-2 text-lg text-gray-800 text-center rounded-sm py-5 bg-yellow-400">
+        <i class="fas fa-comment-dots mr-2 fa-lg"></i> Continue with Kakaotalk
+    </a>
+</div>
+<div class="flex items-center w-full my-6">
+    <div class="h-px w-full bg-gray-400"></div>
+    <span class="text-gray-600 font-medium mx-4">or</span>
+    <div class="h-px w-full bg-gray-400"></div>
 </div>
