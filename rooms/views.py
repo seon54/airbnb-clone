@@ -10,7 +10,7 @@ class HomeView(ListView):
     """ Home View Definition """
 
     model = Room
-    paginate_by = 10
+    paginate_by = 12
     ordering = "created"
     paginate_orphans = 5
     context_object_name = "rooms"
