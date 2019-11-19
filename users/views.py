@@ -1,10 +1,11 @@
 import os
 import requests
+from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.core.files.base import ContentFile
 from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
-from django.views.generic import FormView
+from django.views.generic import FormView, DetailView
 from .forms import LoginForm, SignUpForm
 from .models import User
 
@@ -25,6 +26,7 @@ class LoginView(FormView):
 
 def logout_view(request):
     logout(request)
+    messages.info(request, "See you later")
     return redirect(reverse('core:home'))
 
 
@@ -82,7 +84,7 @@ def github_callback(request):
             error = token_json.get('error', None)
 
             if error is not None:
-                raise GithubException()
+                raise GithubException("Can't get access token.")
             else:
                 access_token = token_json.get('access_token')
                 profile_request = requests.get(
@@ -97,20 +99,21 @@ def github_callback(request):
                     try:
                         user = User.objects.get(email=email)
                         if user.login_method != User.LOGIN_GITHUB:
-                            raise GithubException()
+                            raise GithubException(f'Please login with {user.login_method}.')
                     except User.DoesNotExist:
                         user = User.objects.create(username=email, first_name=name, bio=bio, email=email,
                                                    login_method=User.LOGIN_GITHUB, email_verified=True)
                         user.set_unusable_password()
                         user.save()
                     login(request, user)
+                    messages.success(request, f'Welcome back {user.first_name}')
                     return redirect(reverse('core:home'))
                 else:
-                    raise GithubException()
+                    raise GithubException("Can't get your profile.")
         else:
-            raise GithubException()
-    except GithubException:
-        # TODO: send error message
+            raise GithubException("Can't get a code.")
+    except GithubException as e:
+        messages.error(request, e)
         return reverse(reverse('users:login'))
 
 
@@ -135,7 +138,7 @@ def kakao_callback(request):
         token_json = token_request.json()
         error = token_json.get('error', None)
         if error is not None:
-            raise KakaoException()
+            raise KakaoException("Can't get authorization code.")
         access_token = token_json.get('access_token')
         profile_request = requests.get(
             'https://kapi.kakao.com/v2/user/me',
@@ -145,14 +148,14 @@ def kakao_callback(request):
         kakao_accouant = profile_json.get('kakao_account')
         email = kakao_accouant.get('email')
         if email is None:
-            raise KakaoException()
+            raise KakaoException("Please write your email.")
         profile = kakao_accouant.get('profile')
         nickname = profile.get('nickname')
         profile_image = profile.get('profile_image_url')
         try:
             user = User.objects.get(email=email)
             if user.login_method != User.LOGIN_KAKAO:
-                raise KakaoException()
+                raise KakaoException(f"Please log in with {user.login_method}.")
         except User.DoesNotExist:
             user = User.objects.create(email=email, first_name=nickname, login_method=User.LOGIN_KAKAO,
                                        email_verified=True, username=nickname)
@@ -162,6 +165,13 @@ def kakao_callback(request):
                 photo_request = requests.get(profile_image)
                 user.avatar.save(f'{nickname}-avatar', ContentFile(photo_request.content))
         login(request, user)
+        messages.success(request, f'Welcome back {user.first_name}')
         return redirect(reverse('core:home'))
-    except KakaoException:
+    except KakaoException as e:
+        messages.error(request, e)
         return redirect(reverse('users:login'))
+
+
+class UserProfileView(DetailView):
+    model = User
+    context_object_name = 'user_obj'
