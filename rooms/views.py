@@ -3,7 +3,7 @@ from django.shortcuts import render
 from django.views.generic import ListView, DetailView, View
 from django_countries import countries
 from rooms.forms import SearchForm
-from rooms.models import Room, RoomType, Amenity, Facility
+from rooms.models import Room
 
 
 class HomeView(ListView):
