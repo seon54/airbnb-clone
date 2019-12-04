@@ -179,3 +179,9 @@ class UserProfileView(DetailView):
 
 class UpdateProfileView(UpdateView):
     model = User
+    fields = ("first_name", "last_name", "avatar", "gender", "bio", "birthdate", "language", "currency",)
+    template_name = "users/update_profile.html"
+    success_url = reverse_lazy("core:home")
+
+    def get_object(self, queryset=None):
+        return self.request.user

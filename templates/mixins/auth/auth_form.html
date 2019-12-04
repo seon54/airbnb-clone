@@ -1,20 +1,15 @@
-<form method="POST" action="{% url "users:signup" %}" class="w-full">
+<form method="POST" class="w-full">
     {% csrf_token %}
 
     {% if form.non_field_errors %}
         {% for error in form.non_field_errors %}
-            {{ error }}
+            <span class="text-red-700 font-medium text-sm">{{ error }}</span>
         {% endfor %}
     {% endif %}
+
     {% for field in form %}
-        <div class="input {% if field.errors %}has_error{% endif %}">
-            {{ field }}
-            {% if field.errors %}
-                {% for error in field.errors %}
-                    <span class="text-red-700 font-medium text-sm">{{ error }}</span>
-                {% endfor %}
-            {% endif %}
-        </div>
+        {% include 'mixins/auth/form_input.html' with field=field %}
     {% endfor %}
+
     <button class="btn bg-red-500 text-white">{{ cta }}</button>
 </form>
