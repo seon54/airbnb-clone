@@ -16,11 +16,13 @@ class LoginView(FormView):
     success_url = reverse_lazy('core:home')
 
     def form_valid(self, form):
-        email = form.cleaned_data.get('email')
+        username = form.cleaned_data.get('username')
         password = form.cleaned_data.get('password')
-        user = authenticate(self.request, username=email, password=password)
+        user = authenticate(username=username, password=password)
+
         if user is not None:
             login(self.request, user)
+            messages.success(self.request, f'Welcome back {user.first_name}')
         return super().form_valid(form)
 
 
@@ -42,6 +44,7 @@ class SignUpView(FormView):
         user = authenticate(self.request, username=email, password=password)
         if user is not None:
             login(self.request, user)
+            messages.success(self.request, f'Welcome {user.first_name}')
         user.verify_email()
         return super().form_valid(form)
 
