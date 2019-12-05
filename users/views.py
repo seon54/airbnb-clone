@@ -2,6 +2,7 @@ import os
 import requests
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.views import PasswordChangeView
 from django.core.files.base import ContentFile
 from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
@@ -16,9 +17,9 @@ class LoginView(FormView):
     success_url = reverse_lazy('core:home')
 
     def form_valid(self, form):
-        username = form.cleaned_data.get('username')
+        email = form.cleaned_data.get('email')
         password = form.cleaned_data.get('password')
-        user = authenticate(username=username, password=password)
+        user = authenticate(username=email, password=password)
 
         if user is not None:
             login(self.request, user)
@@ -182,9 +183,19 @@ class UserProfileView(DetailView):
 
 class UpdateProfileView(UpdateView):
     model = User
-    fields = ("first_name", "last_name", "avatar", "gender", "bio", "birthdate", "language", "currency",)
+    fields = ("email", "first_name", "last_name", "gender", "bio", "birthdate", "language", "currency",)
     template_name = "users/update_profile.html"
     success_url = reverse_lazy("core:home")
 
     def get_object(self, queryset=None):
         return self.request.user
+
+    def form_valid(self, form):
+        email = form.cleaned_data.get('email')
+        self.object.username = email
+        self.object.save()
+        return super().form_valid(form)
+
+
+class UpdatePasswordView(PasswordChangeView):
+    template_name = 'users/update_password.html'

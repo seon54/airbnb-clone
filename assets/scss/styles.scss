@@ -26,11 +26,20 @@
   @apply text-center rounded-sm py-5 text-lg font-light w-full bg-red-500 text-white py-3 rounded-lg;
 }
 
-input {
+input, textarea, select {
   @apply text-center rounded-sm py-5 text-lg font-light w-full text-left border border-gray-500 px-5;
   &:focus {
     @apply outline-none border-teal-500;
   }
+}
+
+textarea {
+  resize: none;
+  height: 200px;
+}
+
+select {
+  height: 30px;
 }
 
 form {
