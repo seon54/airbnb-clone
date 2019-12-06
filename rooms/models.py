@@ -97,8 +97,15 @@ class Room(TimeStampedModel):
         photo = self.photos.first()
         return photo.file.url
 
+    def get_next_four(self):
+        photos = self.photos.all()[1:5]
+        return photos
+
     def get_absolute_url(self):
         return reverse("rooms:detail", kwargs={"pk": self.pk})
+
+    def get_beds(self):
+        return "1 bed" if self.beds == 1 else f'{self.beds} beds'
 
     def save(self, *args, **kwargs):
         self.city = str.title(self.city)

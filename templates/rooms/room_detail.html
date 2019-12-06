@@ -1,38 +1,41 @@
 {% extends "base.html" %}
 
-
 {% block page_title %}
     {{ room.name }}
 {% endblock page_title %}
 
 {% block content %}
-    <div>
-        <h1>{{ room.name }}</h1>
-        <h3>{{ room.description }}</h3>
+
+    <div class="-mt-5 container max-w-full flex h-75vh mb-20">
+        <div class="border-gray-500 border-2 h-full w-1/2 bg-center bg-cover"
+             style="background-image: url({{ room.first_photo }})"></div>
+        <div class="h-full w-1/2 flex flex-wrap">
+            {% for photo in room.get_next_four %}
+                <div class="border-gray-500 border-2 w-1/2 h-auto bg-cover bg-center"
+                     style="background-image: url({{ photo.file.url }})"></div>
+            {% endfor %}
+        </div>
     </div>
-    <div>
-        <h2>By: {{ room.host.username }}
-            {% if room.host.superhost %}
-                (superhost)
-            {% endif %}
-        </h2>
-        <h3>Amenities</h3>
-        <ul>
-            {% for a in room.amenities.all %}
-                <li>{{ a }}</li>
-            {% endfor %}
-        </ul>
-        <h3>Facilities</h3>
-        <ul>
-            {% for a in room.facilities.all %}
-                <li>{{ a }}</li>
-            {% endfor %}
-        </ul>
-        <h3>House Rules</h3>
-        <ul>
-            {% for a in room.house_rules.all %}
-                <li>{{ a }}</li>
-            {% endfor %}
-        </ul>
+
+    <div class="container mx-auto flex justify-around pb-56">
+        <div class="w-1/2">
+            <div class="flex justify-between">
+                <div>
+                    <h4 class="text-3xl font-medium mb-px">{{ room.name }}</h4>
+                    <span class="text-gray-700 font-light">{{ room.city }}</span>
+                </div>
+                <a class="flex flex-col items-center" href="{{ room.host.get_absolute_url }}">
+                    {% include "mixins/user_avatar.html" with user=room.host %}
+                    <span class="mt-2 text-gray-500">{{ room.host.first_name }}</span>
+                </a>
+            </div>
+            <div class="flex">
+                {{ room.room_type }}
+                {{ room.beds }}
+            </div>
+        </div>
+        <div class="w-1/3">
+
+        </div>
     </div>
 {% endblock %}
