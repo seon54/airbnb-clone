@@ -1,9 +1,15 @@
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.contrib.messages.views import SuccessMessageMixin
 from django.core.paginator import Paginator
-from django.shortcuts import render
+from django.http import Http404
+from django.shortcuts import render, redirect
+from django.urls import reverse
 from django.views.generic import ListView, DetailView, View, UpdateView
 from django_countries import countries
 from rooms.forms import SearchForm
-from rooms.models import Room
+from rooms.models import Room, Photo
+from users.mixins import LoggedInOnlyView
 
 
 class HomeView(ListView):
@@ -89,7 +95,7 @@ class SearchView(View):
         return render(request, "rooms/search.html", {'form': form})
 
 
-class EditRoomView(UpdateView):
+class EditRoomView(LoggedInOnlyView, UpdateView):
     model = Room
     fields = (
         "name",
@@ -110,4 +116,48 @@ class EditRoomView(UpdateView):
         "facilities",
         "rules",
     )
-    template_name = 'rooms/update_room.html'
+    template_name = 'rooms/room_edit.html'
+
+    def get_object(self, queryset=None):
+        room = super().get_object(queryset=queryset)
+        if room.host.pk != self.request.user.pk:
+            raise Http404()
+        return room
+
+
+class RoomPhotosView(LoggedInOnlyView, DetailView):
+    model = Room
+    template_name = 'rooms/room_photos.html'
+
+    def get_object(self, queryset=None):
+        room = super().get_object(queryset=queryset)
+        if room.host.pk != self.request.user.pk:
+            raise Http404()
+        return room
+
+
+@login_required
+def delete_photo(request, room_pk, photo_pk):
+    user = request.user
+    try:
+        room = Room.objects.get(pk=room_pk)
+        if room.host.pk != user.pk:
+            messages.error(request, "Can't delete this photo")
+        else:
+            Photo.objects.filter(pk=photo_pk).delete()
+            messages.success(request, "Photo Deleted")
+        return redirect(reverse("rooms:photos", kwargs={"pk": room_pk}))
+    except Room.DoesNotExist:
+        return request(reverse("core:home"))
+
+
+class EditPhotoView(LoggedInOnlyView, SuccessMessageMixin, UpdateView):
+    model = Photo
+    template_name = 'rooms/edit_photo.html'
+    fields = ("caption",)
+    pk_url_kwarg = 'photo_pk'
+    success_message = 'Photo Updated'
+
+    def get_success_url(self):
+        room_pk = self.kwargs.get("room_pk")
+        return reverse("rooms:photos", kwargs={"pk": room_pk})
