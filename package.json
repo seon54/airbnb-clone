@@ -21,6 +21,6 @@
         "tailwindcss": "^1.1.3"
     },
     "dependencies": {
-        "npm": "^6.13.0"
+        "npm": "^6.13.4"
     }
 }
