@@ -5,9 +5,10 @@ from django.core.paginator import Paginator
 from django.http import Http404
 from django.shortcuts import render, redirect
 from django.urls import reverse
-from django.views.generic import ListView, DetailView, View, UpdateView
+from django.views.generic import ListView, DetailView, View, UpdateView, FormView
 from django_countries import countries
-from rooms.forms import SearchForm
+
+from rooms.forms import SearchForm, CreatePhotoForm
 from rooms.models import Room, Photo
 from users.mixins import LoggedInOnlyView
 
@@ -161,3 +162,29 @@ class EditPhotoView(LoggedInOnlyView, SuccessMessageMixin, UpdateView):
     def get_success_url(self):
         room_pk = self.kwargs.get("room_pk")
         return reverse("rooms:photos", kwargs={"pk": room_pk})
+
+
+class AddPhotoView(LoggedInOnlyView, FormView):
+    model = Photo
+    template_name = 'rooms/photo_create.html'
+    fields = ('caption', 'file',)
+    form_class = CreatePhotoForm
+
+    def post(self, request, *args, **kwargs):
+        form_class = self.get_form_class()
+        form = self.get_form(form_class)
+        if form.is_valid():
+            return self.form_valid(form, **kwargs)
+        else:
+            return self.form_invalid(form, **kwargs)
+
+    def form_valid(self, form, **kwargs):
+        pk = self.kwargs.get('pk')
+        form.save(pk)
+        messages.success(self.request, "Photo Uploaded")
+        return redirect(reverse('rooms:photos', kwargs={'pk': pk}))
+
+    def form_invalid(self, form, **kwargs):
+        pk = self.kwargs.get('pk')
+        messages.error(self.request, "Upload failed")
+        return redirect(reverse('rooms:photos', kwargs={'pk': pk}))
