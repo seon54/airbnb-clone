@@ -68,8 +68,8 @@ class Room(TimeStampedModel):
     beds = models.IntegerField()
     bedrooms = models.IntegerField()
     baths = models.IntegerField()
-    check_in = models.TimeField()
-    check_out = models.TimeField()
+    check_in = models.DateField()
+    check_out = models.DateField()
     instant_book = models.BooleanField(default=False)
     host = models.ForeignKey(
         "users.User", on_delete=models.CASCADE, related_name="rooms"
@@ -80,6 +80,9 @@ class Room(TimeStampedModel):
     amenities = models.ManyToManyField("Amenity", blank=True, related_name="rooms")
     facilities = models.ManyToManyField("Facility", blank=True, related_name="rooms")
     rules = models.ManyToManyField("HouseRule", blank=True, related_name="rooms")
+
+    class Meta:
+        ordering = ['-pk']
 
     def __str__(self):
         return self.name
@@ -94,8 +97,11 @@ class Room(TimeStampedModel):
         return 0
 
     def first_photo(self):
-        photo = self.photos.first()
-        return photo.file.url
+        try:
+            photo = self.photos.first()
+            return photo.file.url
+        except Exception:
+            return None
 
     def get_next_four(self):
         photos = self.photos.all()[1:5]

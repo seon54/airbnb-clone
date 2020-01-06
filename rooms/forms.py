@@ -29,3 +29,35 @@ class CreatePhotoForm(forms.ModelForm):
         photo = super().save(commit=False)
         photo.room = Room.objects.get(pk=pk)
         photo.save()
+
+
+class CreateRoomForm(forms.ModelForm):
+    class Meta:
+        model = Room
+        fields = (
+            "name",
+            "description",
+            "country",
+            "city",
+            "price",
+            "address",
+            "guest",
+            "beds",
+            "bedrooms",
+            "baths",
+            "check_in",
+            "check_out",
+            "instant_book",
+            "room_type",
+            "amenities",
+            "facilities",
+            "rules",
+        )
+        widgets = {
+            'check_in': forms.DateInput(attrs={'type': 'date'}),
+            'check_out': forms.DateInput(attrs={'type': 'date'}),
+        }
+
+    def save(self, *args, **kwargs):
+        room = super().save(commit=False)
+        return room

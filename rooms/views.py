@@ -8,7 +8,7 @@ from django.urls import reverse
 from django.views.generic import ListView, DetailView, View, UpdateView, FormView
 from django_countries import countries
 
-from rooms.forms import SearchForm, CreatePhotoForm
+from rooms.forms import SearchForm, CreatePhotoForm, CreateRoomForm
 from rooms.models import Room, Photo
 from users.mixins import LoggedInOnlyView
 
@@ -165,7 +165,6 @@ class EditPhotoView(LoggedInOnlyView, SuccessMessageMixin, UpdateView):
 
 
 class AddPhotoView(LoggedInOnlyView, FormView):
-    model = Photo
     template_name = 'rooms/photo_create.html'
     fields = ('caption', 'file',)
     form_class = CreatePhotoForm
@@ -188,3 +187,16 @@ class AddPhotoView(LoggedInOnlyView, FormView):
         pk = self.kwargs.get('pk')
         messages.error(self.request, "Upload failed")
         return redirect(reverse('rooms:photos', kwargs={'pk': pk}))
+
+
+class CreateRoomView(LoggedInOnlyView, FormView):
+    form_class = CreateRoomForm
+    template_name = 'rooms/room_create.html'
+
+    def form_valid(self, form):
+        room = form.save()
+        room.host = self.request.user
+        room.save()
+        form.save_m2m()
+        messages.success(self.request, 'Room uploaded')
+        return redirect(reverse('rooms:detail', kwargs={'pk': room.pk}))
