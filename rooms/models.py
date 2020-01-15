@@ -1,7 +1,9 @@
+import datetime
 from django.db import models
 from django_countries.fields import CountryField
 from django.urls import reverse
 from core.models import TimeStampedModel
+from cal import Calendar
 
 
 class AbstractItem(TimeStampedModel):
@@ -113,7 +115,13 @@ class Room(TimeStampedModel):
     def get_beds(self):
         return "1 bed" if self.beds == 1 else f'{self.beds} beds'
 
+    def get_calendars(self):
+        year = datetime.datetime.now().year
+        month = datetime.datetime.now().month
+        this_month = Calendar(year, month)
+        next_month = Calendar(year, month + 1)
+        return [this_month, next_month]
+
     def save(self, *args, **kwargs):
         self.city = str.title(self.city)
         super().save(*args, **kwargs)
-
