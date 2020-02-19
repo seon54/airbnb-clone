@@ -123,7 +123,7 @@ class Room(TimeStampedModel):
             next_month = 1
         this_month_cal = Calendar(year, month)
         next_month_cal = Calendar(year, next_month)
-        return [this_month, next_month]
+        return [this_month_cal, next_month_cal]
 
     def save(self, *args, **kwargs):
         self.city = str.title(self.city)

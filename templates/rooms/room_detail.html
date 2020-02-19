@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% load is_booked %}
+
 {% block page_title %}
     {{ room.name }}
 {% endblock page_title %}
@@ -98,7 +100,7 @@
                 {% if not request.session.is_hosting %}
                     {% for calendar in room.get_calendars %}
                         <div class="mb-20">
-                            <span class="text-center font-medium text-lg block mb-8">{{ calendar.get_month }}  {{ calendar.year }}</span>
+                            <span class="text-center font-medium text-lg block mb-8">{{ calendar.get_month }} {{ calendar.year }}</span>
                             <div class="cal-grid mb-4 m-1 font-semibold">
                                 {% for day in calendar.day_names %}
                                     <span>{{ day }}</span>
@@ -106,13 +108,17 @@
                             </div>
                             <div class="cal-grid">
                                 {% for day in calendar.get_days %}
+                                    {% is_booked room day as is_booked_bool%}
                                     {% if day.number != 0 %}
-                                    {% if day.past %}
-                                    <span class="bg-gray-200 w-3/4 text-center rounded text-gray-400 p-1 hover:bg-teal-400 hover:text-white cursor-pointer ">{{ day }}</span>
-                                    {% else %}
-                                    <span class="bg-gray-200 w-3/4 text-center rounded text-gray-700 p-1 hover:bg-teal-400 hover:text-white cursor-pointer">{{ day }}</span>
-                                    {% endif %}
+
+                                        {% if day.past %}
+                                            <span class="bg-gray-200 w-3/4 text-center rounded text-gray-400 p-1 cursor-pointer ">{{ day }}</span>
+                                        {% elif is_booked_bool %}
+                                            <span class="bg-gray-200 w-3/4 text-center rounded text-gray-400 p-1 cursor-pointer line-through">{{ day }}</span>
                                         {% else %}
+                                            <span class="bg-gray-200 w-3/4 text-center rounded text-gray-700 p-1 hover:bg-teal-400 hover:text-white hover:font-medium cursor-pointer">{{ day }}</span>
+                                        {% endif %}
+                                    {% else %}
                                         <span></span>
                                     {% endif %}
                                 {% endfor %}
