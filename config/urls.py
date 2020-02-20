@@ -23,6 +23,7 @@ urlpatterns = [
     path("", include("core.urls", namespace="core")),
     path("rooms/", include("rooms.urls", namespace="rooms")),
     path("users/", include("users.urls", namespace="users")),
+    path("reservations/", include("reservations.urls", namespace="reservations")),
 ]
 
 if settings.DEBUG:

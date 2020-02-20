@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block page_title %}
+    Reservation {{ reservation.check_in }}
+{% endblock page_title %}
+
+{% block search-bar %}
+{% endblock search-bar %}
+
+{% block content %}
+
+    <div class="container mx-auto my-10 flex flex-col">
+
+        <div class="border-t border-l border-r bg-cover bg-center h-56 rounded-t-lg"
+             style="background-image: url({{ reservation.room.first_photo }});"></div>
+
+        <div class="flex flex-col items-start border-l border-r border-t border-b">
+            <div class="font-medium border-b py-8 px-5 w-full">
+                {{ reservation.check_in }} - {{ reservation.check_out }} <span class="{% if reservation %}
+.status == 'pending' text-yellow-600 {% elif reservation.status == 'canceled' %} text-red-600 {% else %} text-teal-600
+                {% endif %} ">{{ reservation.get_status_display }}</span>
+            </div>
+
+            <span class="text-2xl border-b p-5 mt-2 w-full">
+                {{ reservation.room.name }}
+            </span>
+
+            <div class="flex p-5 border-b w-full">
+                <div class="flex flex-col items-center">
+                    {% include "mixins/user_avatar.html" with user=reservation.room.host %}
+                    <span class="mt-2 text-gray-500">{{ reservation.room.host.first_name }}</span>
+                </div>
+                <div class="ml-5 flex flex-col">
+                    <span class="font-medium mb-px">Contact your Airbnb Host</span>
+                    <a href="#" class="font-medium text-teal-500">Send a Message</a>
+                </div>
+            </div>
+
+            <div class="py-10 px-5">
+                {% if reservation.status == 'pending' %}
+                    <a href="#" class="btn-link block px-3 mb-5">Cancel Reservation</a>
+                    {% if reservation.room.host == user %}
+                        <a href="#" class="btn-link block px-5">Confirm Reservation</a>
+                    {% endif %}
+                {% endif %}
+
+            </div>
+        </div>
+
+
+    </div>
+{% endblock content %}

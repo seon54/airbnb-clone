@@ -3,6 +3,7 @@ import datetime
 from django.utils import timezone
 from django.db import models
 from core.models import TimeStampedModel
+from reservations.managers import CustomReservationManager
 
 
 class Reservation(TimeStampedModel):
@@ -21,6 +22,8 @@ class Reservation(TimeStampedModel):
     room = models.ForeignKey("rooms.Room", on_delete=models.CASCADE, related_name='reservations')
     check_in = models.DateField()
     check_out = models.DateField()
+
+    objects = CustomReservationManager()
 
     def __str__(self):
         return f'{self.room}: {self.check_in}'
@@ -43,7 +46,8 @@ class Reservation(TimeStampedModel):
             for i in range(difference.days + 1):
                 day = start + datetime.timedelta(days=i)
                 BookedDay.objects.get_or_create(day=day, reservation=self)
-        return super().save(*args, **kwargs)
+        else:
+            return super().save(*args, **kwargs)
 
     in_progress.boolean = True
     is_finished.boolean = True
